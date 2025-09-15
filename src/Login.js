@@ -12,7 +12,7 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate("/buses"); // Redirect after successful login
+      navigate("/admin"); // Redirect to Admin Dashboard instead of Bus List
     } catch (err) {
       setError(err.message);
     }

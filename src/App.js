@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import "./App.css";
 import BusList from "./BusList";
 import Login from "./Login";
+import AdminDashboard from "./AdminDashboard";
 
 function Home() {
   return (
@@ -54,7 +55,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/buses" element={<BusList />} />
+        <Route path="/admin" element={<AdminDashboard />} /> {/* Admin Dashboard */}
+        <Route path="/buses" element={<BusList />} /> {/* Bus List for guests */}
       </Routes>
     </Router>
   );
