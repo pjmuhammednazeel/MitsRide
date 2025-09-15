@@ -4,6 +4,7 @@ import "./App.css";
 import BusList from "./BusList";
 import Login from "./Login";
 import AdminDashboard from "./AdminDashboard";
+import MapView from "./MapView";
 
 function Home() {
   return (
@@ -57,6 +58,7 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<AdminDashboard />} /> {/* Admin Dashboard */}
         <Route path="/buses" element={<BusList />} /> {/* Bus List for guests */}
+        <Route path="/map/:busId/:busName" element={<MapView />} /> {/* Live Location Map */}
       </Routes>
     </Router>
   );
