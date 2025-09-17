@@ -5,6 +5,10 @@ import BusList from "./BusList";
 import Login from "./Login";
 import AdminDashboard from "./AdminDashboard";
 import MapView from "./MapView";
+import DriverRegistration from "./DriverRegistration";
+import LiveTracking from "./LiveTracking";
+import Instructions from "./Instructions";
+import FirebaseTest from "./FirebaseTest";
 
 function Home() {
   return (
@@ -27,9 +31,17 @@ function Home() {
         <Link to="/buses">
           <button className="track-btn">Track Buses</button>
         </Link>
+                <Link to="/live-tracking">
+          <button className="track-btn">Live Tracking</button>
+        </Link>
         <Link to="/login">
           <button className="track-btn" style={{ marginLeft: "10px" }}>
             Admin Login
+          </button>
+        </Link>
+        <Link to="/instructions">
+          <button className="track-btn" style={{ marginLeft: "10px", backgroundColor: "#17a2b8" }}>
+            📋 View New Features
           </button>
         </Link>
       </section>
@@ -59,6 +71,10 @@ export default function App() {
         <Route path="/admin" element={<AdminDashboard />} /> {/* Admin Dashboard */}
         <Route path="/buses" element={<BusList />} /> {/* Bus List for guests */}
         <Route path="/map/:busId/:busName" element={<MapView />} /> {/* Live Location Map */}
+        <Route path="/driver-registration" element={<DriverRegistration />} /> {/* Driver Registration */}
+        <Route path="/live-tracking" element={<LiveTracking />} /> {/* Live Tracking Dashboard */}
+        <Route path="/instructions" element={<Instructions />} /> {/* Instructions Page */}
+        <Route path="/firebase-test" element={<FirebaseTest />} /> {/* Firebase Test */}
       </Routes>
     </Router>
   );

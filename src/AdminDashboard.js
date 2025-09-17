@@ -1,102 +1,96 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import { addBus } from "./BusService";
 import BusList from "./BusList";
 
 export default function AdminDashboard() {
-  const [form, setForm] = useState({
-    busName: "",
-    route: "",
-    driverName: "",
-    driverPhone: "",
-  });
-  const [message, setMessage] = useState("");
-
-  async function handleSubmit(e) {
-    e.preventDefault();
-    if (!form.busName || !form.route) {
-      setMessage("Bus Name and Route are required!");
-      return;
-    }
-    try {
-      await addBus({
-        ...form,
-        createdAt: new Date()
-      });
-      setForm({ busName: "", route: "", driverName: "", driverPhone: "" });
-      setMessage("Bus added successfully!");
-    } catch (error) {
-      setMessage("Error adding bus: " + error.message);
-    }
-  }
-
   return (
-    <div style={{ padding: "2rem", maxWidth: "600px", margin: "auto" }}>
+    <div style={{ padding: "2rem", maxWidth: "800px", margin: "auto" }}>
       <h1>Admin Dashboard</h1>
-      <p>Add new bus information below:</p>
-      <form onSubmit={handleSubmit} style={{ marginBottom: "2rem" }}>
-        <input
-          placeholder="Bus Name"
-          value={form.busName}
-          onChange={(e) => setForm({ ...form, busName: e.target.value })}
-          style={{ display: "block", margin: "10px 0", padding: "8px", width: "100%" }}
-          required
-        />
-        <input
-          placeholder="Route"
-          value={form.route}
-          onChange={(e) => setForm({ ...form, route: e.target.value })}
-          style={{ display: "block", margin: "10px 0", padding: "8px", width: "100%" }}
-          required
-        />
-        <input
-          placeholder="Driver Name"
-          value={form.driverName}
-          onChange={(e) => setForm({ ...form, driverName: e.target.value })}
-          style={{ display: "block", margin: "10px 0", padding: "8px", width: "100%" }}
-        />
-        <input
-          placeholder="Driver Phone"
-          value={form.driverPhone}
-          onChange={(e) => setForm({ ...form, driverPhone: e.target.value })}
-          style={{ display: "block", margin: "10px 0", padding: "8px", width: "100%" }}
-        />
-        <button 
-          type="submit"
-          style={{ 
-            padding: "10px 20px", 
-            width: "100%", 
-            marginTop: "10px",
-            backgroundColor: "#007bff",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer"
-          }}
-        >
-          Add Bus
-        </button>
-      </form>
-      {message && (
-        <p style={{ 
-          marginTop: "10px", 
-          color: message.includes("Error") ? "red" : "green" 
-        }}>
-          {message}
-        </p>
-      )}
+      <p>Manage your bus tracking system from here:</p>
       
-      <BusList />
+      {/* Driver Management Section */}
+      <div style={{ marginTop: "2rem", padding: "1.5rem", backgroundColor: "#f8f9fa", borderRadius: "8px", border: "1px solid #dee2e6" }}>
+        <h3 style={{ marginTop: 0, color: "#28a745" }}>🚌 Driver & Tracking Management</h3>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "15px", marginTop: "1rem" }}>
+          <Link to="/driver-registration" style={{ textDecoration: "none" }}>
+            <button style={{ 
+              padding: "15px 20px", 
+              width: "100%",
+              backgroundColor: "#28a745",
+              color: "white",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer",
+              fontSize: "16px",
+              fontWeight: "bold",
+              transition: "background-color 0.3s"
+            }}>
+              👨‍💼 Manage Drivers
+            </button>
+          </Link>
+          <Link to="/live-tracking" style={{ textDecoration: "none" }}>
+            <button style={{ 
+              padding: "15px 20px", 
+              width: "100%",
+              backgroundColor: "#007bff",
+              color: "white",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer",
+              fontSize: "16px",
+              fontWeight: "bold",
+              transition: "background-color 0.3s"
+            }}>
+              📍 Live Tracking
+            </button>
+          </Link>
+          <Link to="/instructions" style={{ textDecoration: "none" }}>
+            <button style={{ 
+              padding: "15px 20px", 
+              width: "100%",
+              backgroundColor: "#17a2b8",
+              color: "white",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer",
+              fontSize: "16px",
+              fontWeight: "bold",
+              transition: "background-color 0.3s"
+            }}>
+              📋 Instructions
+            </button>
+          </Link>
+        </div>
+        <div style={{ marginTop: "1rem", padding: "1rem", backgroundColor: "#e7f3ff", borderRadius: "4px", border: "1px solid #b3d7ff" }}>
+          <h4 style={{ margin: "0 0 0.5rem 0", color: "#0066cc" }}>How to Use:</h4>
+          <ol style={{ margin: 0, paddingLeft: "1.2rem" }}>
+            <li>Register drivers with username & password</li>
+            <li>Share credentials with authorized drivers</li>
+            <li>Monitor real-time locations via Live Tracking</li>
+            <li>Check Instructions for detailed setup guide</li>
+          </ol>
+        </div>
+      </div>
       
-      <Link to="/buses">
+      {/* Bus List Section */}
+      <div style={{ marginTop: "2rem" }}>
+        <h3>Current Bus List</h3>
+        <BusList />
+      </div>
+      
+      <Link to="/buses" style={{ textDecoration: "none" }}>
         <button style={{ 
-          padding: "10px 20px", 
+          padding: "12px 20px", 
           marginTop: "20px", 
           width: "100%",
-          backgroundColor: "#f0f0f0",
-          border: "1px solid #ccc"
+          backgroundColor: "#6c757d",
+          color: "white",
+          border: "none",
+          borderRadius: "6px",
+          cursor: "pointer",
+          fontSize: "16px"
         }}>
-          View Public Bus List
+          🔍 View Public Bus List
         </button>
       </Link>
     </div>
