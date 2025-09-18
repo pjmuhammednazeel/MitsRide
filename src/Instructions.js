@@ -1,7 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 
 export default function Instructions() {
+  const { currentUser } = useAuth();
+
   return (
     <div style={{ padding: "2rem", maxWidth: "800px", margin: "auto" }}>
       <Link to="/admin">
@@ -36,19 +39,32 @@ export default function Instructions() {
             <li>✅ Manage driver status (active/inactive)</li>
             <li>✅ Store driver details (name, phone, bus number)</li>
           </ul>
-          <Link to="/driver-registration">
-            <button style={{ 
-              padding: "8px 16px", 
-              backgroundColor: "#28a745", 
-              color: "white", 
-              border: "none", 
+          {currentUser ? (
+            <Link to="/driver-registration">
+              <button style={{ 
+                padding: "8px 16px", 
+                backgroundColor: "#28a745", 
+                color: "white", 
+                border: "none", 
+                borderRadius: "4px", 
+                cursor: "pointer",
+                marginTop: "1rem"
+              }}>
+                🔧 Manage Drivers
+              </button>
+            </Link>
+          ) : (
+            <div style={{ 
+              marginTop: "1rem", 
+              padding: "8px 12px", 
+              backgroundColor: "#f8d7da", 
+              border: "1px solid #f5c6cb", 
               borderRadius: "4px", 
-              cursor: "pointer",
-              marginTop: "1rem"
+              color: "#721c24" 
             }}>
-              Manage Drivers
-            </button>
-          </Link>
+              🔒 Admin login required to access driver management
+            </div>
+          )}
         </div>
 
         {/* Live Tracking */}
@@ -114,6 +130,16 @@ export default function Instructions() {
         </div>
       </div>
 
+      <div style={{ backgroundColor: "#fff3cd", padding: "1rem", borderRadius: "8px", margin: "2rem 0", border: "1px solid #ffeaa7" }}>
+        <h2>🔒 Access Control & Security</h2>
+        <p><strong>Important:</strong> Driver registration and management features are now protected!</p>
+        <ul>
+          <li><strong>Admin Only:</strong> Driver registration, bus management, and system administration</li>
+          <li><strong>Public Access:</strong> Live bus tracking, viewing locations, and guest features</li>
+          <li><strong>Login Required:</strong> Admins must log in to access management features</li>
+        </ul>
+      </div>
+
       <div style={{ backgroundColor: "#fff3cd", padding: "1.5rem", borderRadius: "8px", margin: "2rem 0", border: "1px solid #ffeaa7" }}>
         <h3>📱 Mobile App Integration Required</h3>
         <p>To complete the system, drivers need to use a mobile app that:</p>
@@ -165,19 +191,35 @@ export default function Instructions() {
         <p>All the web components are now in place. The next step is to develop or integrate a mobile app for drivers.</p>
         
         <div style={{ display: "flex", gap: "1rem", justifyContent: "center", marginTop: "2rem", flexWrap: "wrap" }}>
-          <Link to="/driver-registration">
-            <button style={{ 
-              padding: "12px 24px", 
-              backgroundColor: "#28a745", 
-              color: "white", 
-              border: "none", 
-              borderRadius: "6px", 
-              cursor: "pointer",
-              fontSize: "16px"
-            }}>
-              Start Managing Drivers
-            </button>
-          </Link>
+          {currentUser ? (
+            <Link to="/driver-registration">
+              <button style={{ 
+                padding: "12px 24px", 
+                backgroundColor: "#28a745", 
+                color: "white", 
+                border: "none", 
+                borderRadius: "6px", 
+                cursor: "pointer",
+                fontSize: "16px"
+              }}>
+                Start Managing Drivers
+              </button>
+            </Link>
+          ) : (
+            <Link to="/login">
+              <button style={{ 
+                padding: "12px 24px", 
+                backgroundColor: "#007bff", 
+                color: "white", 
+                border: "none", 
+                borderRadius: "6px", 
+                cursor: "pointer",
+                fontSize: "16px"
+              }}>
+                🔑 Admin Login Required
+              </button>
+            </Link>
+          )}
           <Link to="/live-tracking">
             <button style={{ 
               padding: "12px 24px", 

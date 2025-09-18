@@ -9,6 +9,7 @@ export default function DriverRegistration() {
     driverName: "",
     phone: "",
     busNumber: "",
+    route: "",
     username: "",
     password: ""
   });
@@ -52,6 +53,7 @@ export default function DriverRegistration() {
         name: form.driverName,
         phone: form.phone,
         busNumber: form.busNumber,
+        route: form.route,
         username: form.username,
         password: form.password,
         isActive: true,
@@ -64,7 +66,7 @@ export default function DriverRegistration() {
 
       setMessage(`Driver ${form.driverName} registered successfully! Username: ${form.username}`);
       console.log("Driver registered successfully");
-      setForm({ driverId: "", driverName: "", phone: "", busNumber: "", username: "", password: "" });
+      setForm({ driverId: "", driverName: "", phone: "", busNumber: "", route: "", username: "", password: "" });
       loadDrivers(); // Refresh the list
     } catch (error) {
       setMessage("Error registering driver: " + error.message);
@@ -201,6 +203,13 @@ export default function DriverRegistration() {
           />
           <input
             type="text"
+            placeholder="Bus Route (e.g., College - Railway Station - Market)"
+            value={form.route}
+            onChange={(e) => setForm({ ...form, route: e.target.value })}
+            style={{ display: "block", margin: "10px 0", padding: "8px", width: "100%" }}
+          />
+          <input
+            type="text"
             placeholder="Username"
             value={form.username}
             onChange={(e) => setForm({ ...form, username: e.target.value })}
@@ -260,6 +269,7 @@ export default function DriverRegistration() {
                   <th style={{ padding: "10px", border: "1px solid #ddd", textAlign: "left" }}>Name</th>
                   <th style={{ padding: "10px", border: "1px solid #ddd", textAlign: "left" }}>Phone</th>
                   <th style={{ padding: "10px", border: "1px solid #ddd", textAlign: "left" }}>Bus Number</th>
+                  <th style={{ padding: "10px", border: "1px solid #ddd", textAlign: "left" }}>Route</th>
                   <th style={{ padding: "10px", border: "1px solid #ddd", textAlign: "left" }}>Username</th>
                   <th style={{ padding: "10px", border: "1px solid #ddd", textAlign: "left" }}>Password</th>
                   <th style={{ padding: "10px", border: "1px solid #ddd", textAlign: "left" }}>Status</th>
@@ -273,6 +283,7 @@ export default function DriverRegistration() {
                     <td style={{ padding: "10px", border: "1px solid #ddd" }}>{driver.name}</td>
                     <td style={{ padding: "10px", border: "1px solid #ddd" }}>{driver.phone || "N/A"}</td>
                     <td style={{ padding: "10px", border: "1px solid #ddd" }}>{driver.busNumber || "N/A"}</td>
+                    <td style={{ padding: "10px", border: "1px solid #ddd" }}>{driver.route || "Route not specified"}</td>
                     <td style={{ padding: "10px", border: "1px solid #ddd" }}>{driver.username}</td>
                     <td style={{ padding: "10px", border: "1px solid #ddd" }}>••••••••</td>
                     <td style={{ padding: "10px", border: "1px solid #ddd" }}>

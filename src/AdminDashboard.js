@@ -1,11 +1,57 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import { auth } from "./firebase";
+import { useAuth } from "./AuthContext";
 import BusList from "./BusList";
 
 export default function AdminDashboard() {
+  const navigate = useNavigate();
+  const { currentUser } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate("/");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
   return (
     <div style={{ padding: "2rem", maxWidth: "800px", margin: "auto" }}>
-      <h1>Admin Dashboard</h1>
+      {/* Header with user info and logout */}
+      <div style={{ 
+        display: "flex", 
+        justifyContent: "space-between", 
+        alignItems: "center", 
+        marginBottom: "2rem",
+        padding: "1rem",
+        backgroundColor: "#e9ecef",
+        borderRadius: "8px"
+      }}>
+        <div>
+          <h1 style={{ margin: 0 }}>Admin Dashboard</h1>
+          <p style={{ margin: "0.5rem 0 0 0", color: "#666" }}>
+            Welcome, {currentUser?.email || "Administrator"}
+          </p>
+        </div>
+        <button
+          onClick={handleLogout}
+          style={{
+            padding: "8px 16px",
+            backgroundColor: "#dc3545",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontSize: "14px"
+          }}
+        >
+          🚪 Logout
+        </button>
+      </div>
+
       <p>Manage your bus tracking system from here:</p>
       
       {/* Driver Management Section */}

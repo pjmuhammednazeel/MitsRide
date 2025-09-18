@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import "./App.css";
 import BusList from "./BusList";
+import DriverList from "./DriverList";
 import Login from "./Login";
 import AdminDashboard from "./AdminDashboard";
 import MapView from "./MapView";
@@ -9,8 +10,12 @@ import DriverRegistration from "./DriverRegistration";
 import LiveTracking from "./LiveTracking";
 import Instructions from "./Instructions";
 import FirebaseTest from "./FirebaseTest";
+import { AuthProvider, useAuth } from "./AuthContext";
+import ProtectedRoute from "./ProtectedRoute";
 
 function Home() {
+  const { currentUser } = useAuth();
+
   return (
     <div className="app">
       <header className="header">
@@ -28,22 +33,42 @@ function Home() {
       <section className="hero" id="home">
         <h2>Real-Time Bus Tracking System</h2>
         <p>Track your college buses in real time and never miss a ride again!</p>
-        <Link to="/buses">
-          <button className="track-btn">Track Buses</button>
-        </Link>
-                <Link to="/live-tracking">
-          <button className="track-btn">Live Tracking</button>
-        </Link>
-        <Link to="/login">
-          <button className="track-btn" style={{ marginLeft: "10px" }}>
-            Admin Login
-          </button>
-        </Link>
-        <Link to="/instructions">
-          <button className="track-btn" style={{ marginLeft: "10px", backgroundColor: "#17a2b8" }}>
-            📋 View New Features
-          </button>
-        </Link>
+        
+        {/* Conditional buttons based on authentication */}
+        {currentUser ? (
+          // Admin is logged in - show admin features including bus list
+          <>
+            <Link to="/driver-list">
+              <button className="track-btn">
+                📋 Bus List
+              </button>
+            </Link>
+            <Link to="/admin">
+              <button className="track-btn" style={{ marginLeft: "10px", backgroundColor: "#28a745" }}>
+                📊 Admin Dashboard
+              </button>
+            </Link>
+            <Link to="/driver-registration">
+              <button className="track-btn" style={{ marginLeft: "10px", backgroundColor: "#ffc107", color: "#000" }}>
+                👨‍💼 Driver Registration
+              </button>
+            </Link>
+          </>
+        ) : (
+          // Guest user - show bus list and login button
+          <>
+            <Link to="/driver-list">
+              <button className="track-btn">
+                📋 Bus List
+              </button>
+            </Link>
+            <Link to="/login">
+              <button className="track-btn" style={{ marginLeft: "10px" }}>
+                Admin Login
+              </button>
+            </Link>
+          </>
+        )}
       </section>
 
       <section className="about" id="about">
@@ -64,18 +89,33 @@ function Home() {
 
 export default function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/admin" element={<AdminDashboard />} /> {/* Admin Dashboard */}
-        <Route path="/buses" element={<BusList />} /> {/* Bus List for guests */}
-        <Route path="/map/:busId/:busName" element={<MapView />} /> {/* Live Location Map */}
-        <Route path="/driver-registration" element={<DriverRegistration />} /> {/* Driver Registration */}
-        <Route path="/live-tracking" element={<LiveTracking />} /> {/* Live Tracking Dashboard */}
-        <Route path="/instructions" element={<Instructions />} /> {/* Instructions Page */}
-        <Route path="/firebase-test" element={<FirebaseTest />} /> {/* Firebase Test */}
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/admin" element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/buses" element={<BusList />} /> {/* Bus List for guests */}
+          <Route path="/driver-list" element={<DriverList />} /> {/* Driver List accessible to all users */}
+          <Route path="/map/:busId/:busName" element={<MapView />} /> {/* Live Location Map */}
+          <Route path="/driver-registration" element={
+            <ProtectedRoute>
+              <DriverRegistration />
+            </ProtectedRoute>
+          } /> {/* Protected Driver Registration */}
+          <Route path="/live-tracking" element={<LiveTracking />} /> {/* Live Tracking Dashboard */}
+          <Route path="/instructions" element={<Instructions />} /> {/* Instructions Page */}
+          <Route path="/firebase-test" element={
+            <ProtectedRoute>
+              <FirebaseTest />
+            </ProtectedRoute>
+          } /> {/* Protected Firebase Test */}
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
