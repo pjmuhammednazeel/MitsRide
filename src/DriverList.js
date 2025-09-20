@@ -267,6 +267,23 @@ export default function DriverList() {
                             }}>
                               {driver.isActive ? "ACTIVE" : "INACTIVE"}
                             </span>
+
+                            {/* Tracking button */}
+                            <div style={{ marginTop: 8 }}>
+                              <Link to={`/tracking/${driver.id}`}>
+                                <button style={{
+                                  padding: "6px 10px",
+                                  backgroundColor: "#007bff",
+                                  color: "#fff",
+                                  border: "none",
+                                  borderRadius: "6px",
+                                  cursor: "pointer",
+                                  fontSize: "0.9rem"
+                                }}>
+                                  Tracking
+                                </button>
+                              </Link>
+                            </div>
                           </div>
                         </div>
                       ))}

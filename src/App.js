@@ -8,6 +8,7 @@ import AdminDashboard from "./AdminDashboard";
 import MapView from "./MapView";
 import DriverRegistration from "./DriverRegistration";
 import LiveTracking from "./LiveTracking";
+import TrackingMap from "./TrackingMap";
 import Instructions from "./Instructions";
 import FirebaseTest from "./FirebaseTest";
 import { AuthProvider, useAuth } from "./AuthContext";
@@ -108,6 +109,7 @@ export default function App() {
             </ProtectedRoute>
           } /> {/* Protected Driver Registration */}
           <Route path="/live-tracking" element={<LiveTracking />} /> {/* Live Tracking Dashboard */}
+          <Route path="/tracking/:driverId" element={<TrackingMap />} />
           <Route path="/instructions" element={<Instructions />} /> {/* Instructions Page */}
           <Route path="/firebase-test" element={
             <ProtectedRoute>
