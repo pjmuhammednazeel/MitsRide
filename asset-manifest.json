@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/MitsRide/static/css/main.649f5adf.css",
+    "main.js": "/MitsRide/static/js/main.3544035a.js",
+    "static/js/453.1943ff32.chunk.js": "/MitsRide/static/js/453.1943ff32.chunk.js",
+    "index.html": "/MitsRide/index.html",
+    "main.649f5adf.css.map": "/MitsRide/static/css/main.649f5adf.css.map",
+    "main.3544035a.js.map": "/MitsRide/static/js/main.3544035a.js.map",
+    "453.1943ff32.chunk.js.map": "/MitsRide/static/js/453.1943ff32.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.649f5adf.css",
+    "static/js/main.3544035a.js"
+  ]
+}
