@@ -11,15 +11,36 @@ export default function DriverRegistration() {
     busNumber: "",
     route: "",
     username: "",
-    password: ""
+    password: "",
+    busPhoto: ""
   });
   const [message, setMessage] = useState("");
   const [drivers, setDrivers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [photoPreview, setPhotoPreview] = useState("");
 
   useEffect(() => {
     loadDrivers();
   }, []);
+
+  // Handle bus photo upload
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        setMessage("Photo size should be less than 5MB");
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64String = event.target.result;
+        setForm({ ...form, busPhoto: base64String });
+        setPhotoPreview(base64String);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   // Register new driver
   const handleSubmit = async (e) => {
@@ -56,6 +77,7 @@ export default function DriverRegistration() {
         route: form.route,
         username: form.username,
         password: form.password,
+        busPhoto: form.busPhoto || "/default-bus.jpg",
         isActive: true,
         registeredDate: new Date().toISOString().split('T')[0],
         lastActive: new Date().toISOString()
@@ -66,7 +88,8 @@ export default function DriverRegistration() {
 
       setMessage(`Driver ${form.driverName} registered successfully! Username: ${form.username}`);
       console.log("Driver registered successfully");
-      setForm({ driverId: "", driverName: "", phone: "", busNumber: "", route: "", username: "", password: "" });
+      setForm({ driverId: "", driverName: "", phone: "", busNumber: "", route: "", username: "", password: "", busPhoto: "" });
+      setPhotoPreview("");
       loadDrivers(); // Refresh the list
     } catch (error) {
       setMessage("Error registering driver: " + error.message);
@@ -94,17 +117,6 @@ export default function DriverRegistration() {
       setMessage("Error loading drivers: " + error.message);
     } finally {
       setLoading(false);
-    }
-  };
-
-  // Toggle driver status
-  const toggleDriverStatus = async (driverId, newStatus) => {
-    try {
-      await set(ref(database, `drivers/registered/${driverId}/isActive`), newStatus);
-      setMessage(`Driver ${driverId} ${newStatus ? 'activated' : 'deactivated'}`);
-      loadDrivers();
-    } catch (error) {
-      setMessage('Error updating driver status: ' + error.message);
     }
   };
 
@@ -140,26 +152,6 @@ export default function DriverRegistration() {
       </div>
 
       <h1>Driver Registration</h1>
-      
-      {/* Firebase Test Button */}
-      <div style={{ marginBottom: "1rem", padding: "1rem", backgroundColor: "#f8f9fa", borderRadius: "4px" }}>
-        <Link to="/firebase-test">
-          <button style={{
-            padding: "8px 16px",
-            backgroundColor: "#17a2b8",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            marginRight: "10px"
-          }}>
-            🔧 Test Firebase Connection
-          </button>
-        </Link>
-        <small style={{ color: "#666" }}>
-          Click here if you're having trouble registering drivers
-        </small>
-      </div>
       
       {/* Registration Form */}
       <div style={{ 
@@ -224,6 +216,62 @@ export default function DriverRegistration() {
             style={{ display: "block", margin: "10px 0", padding: "8px", width: "100%" }}
             required
           />
+          
+          {/* Bus Photo Upload */}
+          <div style={{ margin: "20px 0" }}>
+            <label style={{ 
+              display: "block", 
+              marginBottom: "8px", 
+              fontWeight: "bold", 
+              color: "#333" 
+            }}>
+              Bus Photo (Optional):
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handlePhotoUpload}
+              style={{ 
+                display: "block", 
+                margin: "10px 0", 
+                padding: "8px", 
+                width: "100%",
+                border: "1px solid #ddd",
+                borderRadius: "4px",
+                backgroundColor: "white"
+              }}
+            />
+            {photoPreview && (
+              <div style={{ 
+                marginTop: "10px", 
+                textAlign: "center",
+                border: "1px solid #ddd",
+                borderRadius: "8px",
+                padding: "10px",
+                backgroundColor: "white"
+              }}>
+                <p style={{ 
+                  margin: "0 0 10px 0", 
+                  color: "#666", 
+                  fontSize: "14px" 
+                }}>
+                  Photo Preview:
+                </p>
+                <img 
+                  src={photoPreview} 
+                  alt="Bus preview" 
+                  style={{ 
+                    maxWidth: "200px", 
+                    maxHeight: "150px", 
+                    borderRadius: "6px",
+                    objectFit: "cover",
+                    border: "1px solid #ddd"
+                  }} 
+                />
+              </div>
+            )}
+          </div>
+          
           <button
             type="submit"
             style={{
@@ -269,10 +317,10 @@ export default function DriverRegistration() {
                   <th style={{ padding: "10px", border: "1px solid #ddd", textAlign: "left" }}>Name</th>
                   <th style={{ padding: "10px", border: "1px solid #ddd", textAlign: "left" }}>Phone</th>
                   <th style={{ padding: "10px", border: "1px solid #ddd", textAlign: "left" }}>Bus Number</th>
+                  <th style={{ padding: "10px", border: "1px solid #ddd", textAlign: "left" }}>Bus Photo</th>
                   <th style={{ padding: "10px", border: "1px solid #ddd", textAlign: "left" }}>Route</th>
                   <th style={{ padding: "10px", border: "1px solid #ddd", textAlign: "left" }}>Username</th>
                   <th style={{ padding: "10px", border: "1px solid #ddd", textAlign: "left" }}>Password</th>
-                  <th style={{ padding: "10px", border: "1px solid #ddd", textAlign: "left" }}>Status</th>
                   <th style={{ padding: "10px", border: "1px solid #ddd", textAlign: "left" }}>Actions</th>
                 </tr>
               </thead>
@@ -283,33 +331,30 @@ export default function DriverRegistration() {
                     <td style={{ padding: "10px", border: "1px solid #ddd" }}>{driver.name}</td>
                     <td style={{ padding: "10px", border: "1px solid #ddd" }}>{driver.phone || "N/A"}</td>
                     <td style={{ padding: "10px", border: "1px solid #ddd" }}>{driver.busNumber || "N/A"}</td>
+                    <td style={{ padding: "10px", border: "1px solid #ddd", textAlign: "center" }}>
+                      {driver.busPhoto && driver.busPhoto !== "/default-bus.jpg" ? (
+                        <img 
+                          src={driver.busPhoto} 
+                          alt={`Bus ${driver.busNumber}`}
+                          style={{
+                            width: "60px",
+                            height: "40px",
+                            objectFit: "cover",
+                            borderRadius: "4px",
+                            border: "1px solid #ddd",
+                            cursor: "pointer"
+                          }}
+                          onClick={() => window.open(driver.busPhoto, '_blank')}
+                          title="Click to view full size"
+                        />
+                      ) : (
+                        <span style={{ color: "#999", fontSize: "12px" }}>No photo</span>
+                      )}
+                    </td>
                     <td style={{ padding: "10px", border: "1px solid #ddd" }}>{driver.route || "Route not specified"}</td>
                     <td style={{ padding: "10px", border: "1px solid #ddd" }}>{driver.username}</td>
                     <td style={{ padding: "10px", border: "1px solid #ddd" }}>••••••••</td>
                     <td style={{ padding: "10px", border: "1px solid #ddd" }}>
-                      <span style={{ 
-                        color: driver.isActive ? "green" : "red",
-                        fontWeight: "bold"
-                      }}>
-                        {driver.isActive ? "Active" : "Inactive"}
-                      </span>
-                    </td>
-                    <td style={{ padding: "10px", border: "1px solid #ddd" }}>
-                      <button
-                        onClick={() => toggleDriverStatus(driver.id, !driver.isActive)}
-                        style={{
-                          padding: "4px 8px",
-                          margin: "2px",
-                          backgroundColor: driver.isActive ? "#ffc107" : "#28a745",
-                          color: "white",
-                          border: "none",
-                          borderRadius: "4px",
-                          cursor: "pointer",
-                          fontSize: "12px"
-                        }}
-                      >
-                        {driver.isActive ? "Deactivate" : "Activate"}
-                      </button>
                       <button
                         onClick={() => deleteDriver(driver.id, driver.username)}
                         style={{

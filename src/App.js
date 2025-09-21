@@ -1,16 +1,12 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import "./App.css";
-import BusList from "./BusList";
 import DriverList from "./DriverList";
 import Login from "./Login";
 import AdminDashboard from "./AdminDashboard";
 import MapView from "./MapView";
 import DriverRegistration from "./DriverRegistration";
-import LiveTracking from "./LiveTracking";
 import TrackingMap from "./TrackingMap";
-import Instructions from "./Instructions";
-import FirebaseTest from "./FirebaseTest";
 import { AuthProvider, useAuth } from "./AuthContext";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -100,7 +96,6 @@ export default function App() {
               <AdminDashboard />
             </ProtectedRoute>
           } />
-          <Route path="/buses" element={<BusList />} /> {/* Bus List for guests */}
           <Route path="/driver-list" element={<DriverList />} /> {/* Driver List accessible to all users */}
           <Route path="/map/:busId/:busName" element={<MapView />} /> {/* Live Location Map */}
           <Route path="/driver-registration" element={
@@ -108,14 +103,7 @@ export default function App() {
               <DriverRegistration />
             </ProtectedRoute>
           } /> {/* Protected Driver Registration */}
-          <Route path="/live-tracking" element={<LiveTracking />} /> {/* Live Tracking Dashboard */}
           <Route path="/tracking/:driverId" element={<TrackingMap />} />
-          <Route path="/instructions" element={<Instructions />} /> {/* Instructions Page */}
-          <Route path="/firebase-test" element={
-            <ProtectedRoute>
-              <FirebaseTest />
-            </ProtectedRoute>
-          } /> {/* Protected Firebase Test */}
         </Routes>
       </Router>
     </AuthProvider>

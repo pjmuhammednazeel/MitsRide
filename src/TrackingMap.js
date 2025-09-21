@@ -1,4 +1,3 @@
-// src/TrackingMap.js
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { database } from "./firebase";
@@ -7,12 +6,12 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-// Use a custom icon so we don't depend on default marker assets
-const busIcon = new L.Icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/61/61205.png",
-  iconSize: [36, 36],
-  iconAnchor: [18, 36],
-  popupAnchor: [0, -36],
+// Fix for default markers in React Leaflet
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 
 function RecenterOnChange({ lat, lng }) {
@@ -106,13 +105,17 @@ export default function TrackingMap() {
 
         {/* Show marker if coordinates available */}
         {location.lat != null && location.lng != null && (
-          <Marker position={[location.lat, location.lng]} icon={busIcon}>
+          <Marker position={[location.lat, location.lng]}>
             <Popup>
-              {driverName || driverId}
-              <br />
-              {`Lat: ${location.lat.toFixed(6)}`}
-              <br />
-              {`Lng: ${location.lng.toFixed(6)}`}
+              <div style={{ textAlign: "center" }}>
+                <strong>📍 {driverName || driverId}</strong>
+                <br />
+                <small>
+                  Lat: {location.lat.toFixed(6)}
+                  <br />
+                  Lng: {location.lng.toFixed(6)}
+                </small>
+              </div>
             </Popup>
           </Marker>
         )}

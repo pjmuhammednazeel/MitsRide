@@ -90,7 +90,7 @@ export default function MapView() {
     <div style={{ padding: "1rem" }}>
       <div style={{ marginBottom: "1rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <h2>Live Location: {decodeURIComponent(busName || "Bus")}</h2>
-        <Link to="/buses">
+        <Link to="/driver-list">
           <button style={{
             padding: "8px 16px",
             backgroundColor: "#6c757d",
@@ -99,7 +99,7 @@ export default function MapView() {
             borderRadius: "4px",
             cursor: "pointer"
           }}>
-            Back to Bus List
+            Back to Driver List
           </button>
         </Link>
       </div>

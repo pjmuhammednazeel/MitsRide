@@ -45,7 +45,7 @@ const ProtectedRoute = ({ children }) => {
           }}>
             <li style={{ padding: "0.25rem 0" }}>✅ View live bus locations</li>
             <li style={{ padding: "0.25rem 0" }}>✅ Track individual buses</li>
-            <li style={{ padding: "0.25rem 0" }}>✅ Access live tracking dashboard</li>
+            <li style={{ padding: "0.25rem 0" }}>✅ Access individual driver tracking</li>
           </ul>
         </div>
 
@@ -102,7 +102,7 @@ const ProtectedRoute = ({ children }) => {
             </button>
           </Link>
 
-          <Link to="/buses">
+          <Link to="/driver-list">
             <button style={{
               padding: "12px 24px",
               backgroundColor: "#28a745",
@@ -113,7 +113,7 @@ const ProtectedRoute = ({ children }) => {
               cursor: "pointer",
               textDecoration: "none"
             }}>
-              🚌 View Buses
+              🚌 View Drivers
             </button>
           </Link>
         </div>

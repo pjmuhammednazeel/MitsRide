@@ -51,13 +51,6 @@ export default function DriverLogin({ onLogin }) {
         return;
       }
 
-      // Check if driver is active
-      if (!driverData.isActive) {
-        setMessage("❌ Your account is deactivated. Contact admin.");
-        setLoading(false);
-        return;
-      }
-
       setMessage("✅ Login successful!");
       console.log("Login successful for driver:", driverData.name);
 

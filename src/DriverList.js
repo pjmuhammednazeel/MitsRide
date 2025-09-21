@@ -7,9 +7,17 @@ export default function DriverList() {
   const [buses, setBuses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
     fetchBuses();
+    
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const fetchBuses = async () => {
@@ -32,7 +40,6 @@ export default function DriverList() {
               route: driver.route || "Route information not available",
               capacity: driver.capacity || "50 passengers",
               busPhoto: driver.busPhoto || "/default-bus.jpg",
-              status: driver.isActive ? "Active" : "Inactive",
               drivers: []
             };
           }
@@ -42,7 +49,6 @@ export default function DriverList() {
             name: driver.name || driver.driverName,
             username: driver.username,
             phone: driver.phone,
-            isActive: driver.isActive,
             registeredDate: driver.registeredDate,
             lastActive: driver.lastActive
           });
@@ -73,12 +79,12 @@ export default function DriverList() {
     return date.toLocaleDateString();
   };
 
-  const getBusStatusColor = (status) => {
-    return status === "Active" ? "#28a745" : "#ffc107";
-  };
-
   return (
-    <div style={{ padding: "2rem", maxWidth: "1200px", margin: "auto" }}>
+    <div style={{ 
+      padding: isMobile ? "1rem" : "2rem", 
+      maxWidth: "1200px", 
+      margin: "auto" 
+    }}>
       <div style={{ marginBottom: "2rem" }}>
         <h1 style={{ color: "#333", marginBottom: "0.5rem" }}>🚌 MitsRide Bus Fleet</h1>
         <p style={{ color: "#666", fontSize: "16px" }}>
@@ -111,15 +117,16 @@ export default function DriverList() {
             backgroundColor: "#e9ecef", 
             borderRadius: "6px",
             display: "flex",
+            flexDirection: isMobile ? "column" : "row",
             justifyContent: "space-between",
-            alignItems: "center"
+            alignItems: isMobile ? "flex-start" : "center",
+            gap: isMobile ? "0.5rem" : "0"
           }}>
             <span style={{ fontWeight: "bold", color: "#495057" }}>
               Total Buses: {buses.filter(b => b.busNumber !== "Unassigned").length}
             </span>
             <span style={{ color: "#6c757d", fontSize: "14px" }}>
-              Active: {buses.filter(b => b.status === "Active").length} | 
-              Inactive: {buses.filter(b => b.status === "Inactive").length}
+              Total Drivers: {buses.reduce((total, bus) => total + bus.drivers.length, 0)}
             </span>
           </div>
 
@@ -129,77 +136,146 @@ export default function DriverList() {
                 border: "2px solid #dee2e6", 
                 borderRadius: "15px",
                 backgroundColor: "#fff",
-                borderLeftColor: getBusStatusColor(bus.status),
+                borderLeftColor: "#007bff",
                 borderLeftWidth: "6px",
                 overflow: "hidden",
                 boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
               }}>
                 {/* Bus Header Section */}
                 <div style={{ 
-                  display: "grid", 
-                  gridTemplateColumns: "200px 1fr", 
-                  gap: "1.5rem",
-                  padding: "1.5rem"
+                  display: "flex", 
+                  flexDirection: isMobile ? "column" : "row",
+                  gap: "1rem",
+                  padding: "1rem"
                 }}>
                   {/* Bus Photo */}
                   <div style={{ 
-                    width: "200px", 
-                    height: "120px", 
+                    width: isMobile ? "100%" : "200px", 
+                    height: isMobile ? "180px" : "120px", 
                     backgroundColor: "#f8f9fa",
                     borderRadius: "10px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    border: "2px dashed #dee2e6"
+                    border: "2px solid #dee2e6",
+                    overflow: "hidden",
+                    flexShrink: 0
                   }}>
-                    <div style={{ textAlign: "center", color: "#6c757d" }}>
-                      <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>🚌</div>
-                      <div style={{ fontSize: "12px" }}>Bus Photo</div>
-                      <div style={{ fontSize: "10px" }}>Coming Soon</div>
-                    </div>
+                    {bus.busPhoto && bus.busPhoto !== "/default-bus.jpg" ? (
+                      <img 
+                        src={bus.busPhoto} 
+                        alt={`Bus ${bus.busNumber}`}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          cursor: "pointer",
+                          transition: "transform 0.3s ease, opacity 0.3s ease",
+                          borderRadius: "8px"
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.transform = "scale(1.05)";
+                          e.target.style.opacity = "0.8";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.transform = "scale(1)";
+                          e.target.style.opacity = "1";
+                        }}
+                        onClick={() => {
+                          // Create a modal-like overlay for better image viewing
+                          const overlay = document.createElement('div');
+                          overlay.style.cssText = `
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: rgba(0,0,0,0.9);
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            z-index: 10000;
+                            cursor: pointer;
+                          `;
+                          
+                          const img = document.createElement('img');
+                          img.src = bus.busPhoto;
+                          img.style.cssText = `
+                            max-width: 90%;
+                            max-height: 90%;
+                            object-fit: contain;
+                            border-radius: 8px;
+                            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+                          `;
+                          
+                          const closeText = document.createElement('div');
+                          closeText.innerHTML = '× Click anywhere to close';
+                          closeText.style.cssText = `
+                            position: absolute;
+                            top: 20px;
+                            right: 20px;
+                            color: white;
+                            font-size: 20px;
+                            font-weight: bold;
+                            background: rgba(0,0,0,0.5);
+                            padding: 10px 15px;
+                            border-radius: 5px;
+                          `;
+                          
+                          overlay.appendChild(img);
+                          overlay.appendChild(closeText);
+                          document.body.appendChild(overlay);
+                          
+                          overlay.onclick = () => document.body.removeChild(overlay);
+                          
+                          // Close on escape key
+                          const handleEscape = (e) => {
+                            if (e.key === 'Escape') {
+                              document.body.removeChild(overlay);
+                              document.removeEventListener('keydown', handleEscape);
+                            }
+                          };
+                          document.addEventListener('keydown', handleEscape);
+                        }}
+                        title="🖼️ Click to view full size image"
+                      />
+                    ) : (
+                      <div style={{ textAlign: "center", color: "#6c757d" }}>
+                        <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>🚌</div>
+                        <div style={{ fontSize: "12px" }}>No Photo</div>
+                        <div style={{ fontSize: "10px" }}>Available</div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Bus Details */}
-                  <div>
+                  <div style={{ flex: 1 }}>
                     <div style={{ 
                       display: "flex", 
                       alignItems: "center", 
                       gap: "1rem", 
-                      marginBottom: "1rem" 
+                      marginBottom: "1rem",
+                      flexWrap: "wrap"
                     }}>
                       <h2 style={{ 
                         margin: "0", 
                         color: "#333",
-                        fontSize: "1.5rem"
+                        fontSize: isMobile ? "1.3rem" : "1.5rem"
                       }}>
                         Bus {bus.busNumber}
                       </h2>
-                      <span style={{
-                        fontSize: "0.8rem",
-                        padding: "4px 12px",
-                        borderRadius: "15px",
-                        backgroundColor: getBusStatusColor(bus.status),
-                        color: bus.status === "Active" ? "white" : "#000",
-                        fontWeight: "bold"
-                      }}>
-                        {bus.status}
-                      </span>
                     </div>
                     
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                       <div>
-                        <p style={{ margin: "0 0 0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                          <span style={{ fontWeight: "bold", color: "#495057" }}>🗺️ Route:</span>
-                          <span style={{ color: "#007bff" }}>{bus.route}</span>
-                        </p>
-                        <p style={{ margin: "0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                          <span style={{ fontWeight: "bold", color: "#495057" }}>� Capacity:</span>
-                          <span style={{ color: "#6c757d" }}>{bus.capacity}</span>
+                        <p style={{ margin: "0", display: "flex", alignItems: "flex-start", gap: "0.5rem", flexWrap: "wrap" }}>
+                          <span style={{ fontWeight: "bold", color: "#495057", minWidth: "60px" }}>🗺️ Route:</span>
+                          <span style={{ color: "#007bff", flex: 1, wordBreak: "break-word" }}>{bus.route}</span>
                         </p>
                       </div>
                       <div>
-                        <p style={{ margin: "0 0 0.5rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                          <span style={{ fontWeight: "bold", color: "#495057" }}>👨‍� Drivers:</span>
+                        <p style={{ margin: "0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                          <span style={{ fontWeight: "bold", color: "#495057" }}>👨‍💼 Drivers:</span>
                           <span style={{ color: "#6c757d" }}>{bus.drivers.length} assigned</span>
                         </p>
                       </div>
@@ -232,12 +308,12 @@ export default function DriverList() {
                           padding: "1rem",
                           borderRadius: "8px",
                           border: "1px solid #dee2e6",
-                          display: "grid",
-                          gridTemplateColumns: "1fr 1fr 1fr",
+                          display: "flex",
+                          flexDirection: isMobile ? "column" : "row",
                           gap: "1rem",
-                          alignItems: "center"
+                          alignItems: isMobile ? "stretch" : "center"
                         }}>
-                          <div>
+                          <div style={{ flex: isMobile ? "none" : "1" }}>
                             <div style={{ fontWeight: "bold", color: "#333", marginBottom: "0.25rem" }}>
                               {driver.name}
                             </div>
@@ -246,10 +322,10 @@ export default function DriverList() {
                             </div>
                           </div>
                           
-                          <div>
+                          <div style={{ flex: isMobile ? "none" : "1" }}>
                             {driver.phone && (
-                              <div style={{ fontSize: "0.9rem", color: "#6c757d" }}>
-                                � {driver.phone}
+                              <div style={{ fontSize: "0.9rem", color: "#6c757d", marginBottom: "0.25rem" }}>
+                                📞 {driver.phone}
                               </div>
                             )}
                             <div style={{ fontSize: "0.8rem", color: "#6c757d" }}>
@@ -257,19 +333,12 @@ export default function DriverList() {
                             </div>
                           </div>
                           
-                          <div style={{ textAlign: "right" }}>
-                            <span style={{
-                              fontSize: "0.75rem",
-                              padding: "2px 8px",
-                              borderRadius: "12px",
-                              backgroundColor: driver.isActive ? "#28a745" : "#ffc107",
-                              color: driver.isActive ? "white" : "#000"
-                            }}>
-                              {driver.isActive ? "ACTIVE" : "INACTIVE"}
-                            </span>
-
+                          <div style={{ 
+                            textAlign: isMobile ? "center" : "right",
+                            marginTop: isMobile ? "0.5rem" : "0"
+                          }}>
                             {/* Tracking button */}
-                            <div style={{ marginTop: 8 }}>
+                            <div>
                               <Link to={`/tracking/${driver.id}`}>
                                 <button style={{
                                   padding: "6px 10px",
