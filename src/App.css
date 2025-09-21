@@ -32,11 +32,24 @@ body {
   font-size: 1.5rem;
 }
 
-.header nav a {
+.header nav {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header nav a,
+.header nav a:visited {
   color: white;
-  margin-left: 15px;
   text-decoration: none;
   font-weight: bold;
+  padding: 8px 15px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.header nav a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .hero {
@@ -72,4 +85,58 @@ body {
   color: white;
   padding: 20px;
   font-size: 0.9rem;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    padding: 15px;
+    gap: 15px;
+  }
+
+  .logo-area {
+    justify-content: center;
+  }
+
+  .header nav {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .header nav a {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+  }
+
+  .hero {
+    padding: 40px 15px;
+  }
+
+  .hero h2 {
+    font-size: 1.8rem;
+  }
+
+  .track-btn {
+    margin: 10px 5px;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header nav {
+    width: 100%;
+  }
+
+  .header nav a {
+    flex: 1;
+    text-align: center;
+    min-width: 80px;
+  }
+
+  .hero h2 {
+    font-size: 1.5rem;
+  }
 }

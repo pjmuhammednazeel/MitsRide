@@ -7,6 +7,7 @@ import AdminDashboard from "./AdminDashboard";
 import MapView from "./MapView";
 import DriverRegistration from "./DriverRegistration";
 import TrackingMap from "./TrackingMap";
+import AboutUs from "./AboutUs";
 import { AuthProvider, useAuth } from "./AuthContext";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -21,9 +22,9 @@ function Home() {
           <h1 className="logo-text">MitsRide</h1>
         </div>
         <nav>
-          <a href="#home">Home</a>
-          <a href="#about">About</a>
-          <a href="#contact">Contact</a>
+          <Link to="/">Home</Link>
+          <Link to="/about">About Us</Link>
+          <a href="#contact">Contact Us</a>
         </nav>
       </header>
 
@@ -90,6 +91,7 @@ export default function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/about" element={<AboutUs />} />
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={
             <ProtectedRoute>
